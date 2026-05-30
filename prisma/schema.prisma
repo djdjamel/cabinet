@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/infrastructure/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum TicketType {
+  normal
+  urgent
+  acte_court
+}
+
+enum TicketEtat {
+  en_attente
+  appele
+  en_consultation
+  termine
+  absent
+  expire
+  annule
+}
+
+enum UserRole {
+  nurse
+  admin
+}
+
+// ─── Tables ──────────────────────────────────────────────────────────────────
+
+model Cabinet {
+  id             String   @id @default(uuid())
+  nom            String
+  fuseau_horaire String   @default("Africa/Casablanca")
+  params         Json     @default("{}")
+  cree_le        DateTime @default(now())
+
+  users   User[]
+  tickets Ticket[]
+
+  @@map("cabinets")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  cabinet_id        String
+  nom               String
+  identifiant       String   @unique
+  mot_de_passe_hash String
+  role              UserRole @default(nurse)
+  cree_le           DateTime @default(now())
+
+  cabinet Cabinet @relation(fields: [cabinet_id], references: [id])
+
+  @@map("users")
+}
+
+model Ticket {
+  id           String     @id @default(uuid())
+  cabinet_id   String
+  date_file    DateTime   @db.Date
+  numero       Int
+  type         TicketType @default(normal)
+  etat         TicketEtat @default(en_attente)
+  jeton_public String     @unique
+  nom_prive    String?
+  ordre        Decimal    @db.Decimal(10, 4)
+
+  grace_expire_le   DateTime?
+  nb_reintegrations Int       @default(0)
+
+  // Horodatages métier
+  cree_le          DateTime  @default(now())
+  appele_le        DateTime?
+  absent_le        DateTime?
+  debut_consult_le DateTime?
+  fin_le           DateTime?
+
+  cabinet Cabinet @relation(fields: [cabinet_id], references: [id])
+
+  @@unique([cabinet_id, date_file, numero])
+  @@index([cabinet_id, date_file, etat, ordre])
+  @@map("tickets")
+}
