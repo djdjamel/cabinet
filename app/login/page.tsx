@@ -33,54 +33,86 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-surface">
-      <div className="w-full max-w-sm bg-white rounded-lg shadow-sm border border-outline-variant/40 p-8">
-        <h1 className="text-2xl font-display font-bold text-center mb-6 text-primary tracking-tight">
-          Connexion
-        </h1>
+    <main className="min-h-screen flex">
+      {/* ── Panneau gauche — identité ──────────────────────────────── */}
+      <div className="hidden md:flex w-5/12 bg-[#0F1F3D] flex-col justify-between p-12 shrink-0">
+        <div>
+          <div className="w-8 h-1 bg-status-consultation mb-8" />
+          <h1 className="text-4xl font-display font-bold text-white leading-snug">
+            File d'attente<br />patients
+          </h1>
+          <p className="mt-4 text-white/40 text-sm leading-relaxed">
+            Système de gestion<br />de la file d'attente médicale
+          </p>
+        </div>
+        <p className="text-white/20 text-xs">
+          Accès réservé au personnel autorisé
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="identifiant" className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1.5">
-              Identifiant
-            </label>
-            <input
-              id="identifiant"
-              name="identifiant"
-              type="text"
-              required
-              autoFocus
-              className="w-full border border-outline-variant rounded px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-            />
-          </div>
+      {/* ── Panneau droit — formulaire ─────────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center bg-surface p-8">
+        <div className="w-full max-w-xs">
+          {/* Mobile-only title */}
+          <h2 className="md:hidden text-2xl font-display font-bold text-primary mb-8 tracking-tight">
+            Connexion
+          </h2>
 
-          <div>
-            <label htmlFor="mot_de_passe" className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1.5">
-              Mot de passe
-            </label>
-            <input
-              id="mot_de_passe"
-              name="mot_de_passe"
-              type="password"
-              required
-              className="w-full border border-outline-variant rounded px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-            />
-          </div>
+          <p className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.15em] mb-8 hidden md:block">
+            Connexion au système
+          </p>
 
-          {error && (
-            <p className="text-sm text-error bg-error/5 border border-error/20 rounded px-3 py-2">
-              {error}
-            </p>
-          )}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="identifiant"
+                className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.12em] mb-2"
+              >
+                Identifiant
+              </label>
+              <input
+                id="identifiant"
+                name="identifiant"
+                type="text"
+                required
+                autoFocus
+                className="w-full border-0 border-b-2 border-outline-variant bg-transparent px-0 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-on-primary font-label font-bold text-xs uppercase tracking-widest py-2.5 rounded shadow-sm transition-all"
-          >
-            {loading ? "Connexion…" : "Se connecter"}
-          </button>
-        </form>
+            <div>
+              <label
+                htmlFor="mot_de_passe"
+                className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.12em] mb-2"
+              >
+                Mot de passe
+              </label>
+              <input
+                id="mot_de_passe"
+                name="mot_de_passe"
+                type="password"
+                required
+                className="w-full border-0 border-b-2 border-outline-variant bg-transparent px-0 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
+
+            {error && (
+              <p className="text-xs text-status-absent bg-status-absent/5 border border-status-absent/20 rounded px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-on-primary font-label font-bold text-xs uppercase tracking-[0.15em] py-3 rounded-sm shadow transition-all"
+              >
+                {loading ? "Connexion…" : "Se connecter"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   );

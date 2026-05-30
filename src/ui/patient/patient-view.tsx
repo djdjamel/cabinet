@@ -29,7 +29,7 @@ export function PatientView({ jeton }: PatientViewProps) {
 
       {/* Bandeau "C'est à vous" */}
       {state.etat === "appele" && (
-        <div className="w-full max-w-sm bg-status-consultation text-on-primary rounded-lg px-6 py-4 text-center shadow-md">
+        <div className="w-full max-w-sm bg-status-consultation text-white rounded-sm px-6 py-4 text-center shadow-md">
           <p className="text-2xl font-bold">🔔 C'est à vous !</p>
           <p dir="rtl" className="text-2xl font-bold mt-1">حان دورك!</p>
         </div>
@@ -37,7 +37,7 @@ export function PatientView({ jeton }: PatientViewProps) {
 
       {/* Bandeau absent + chrono */}
       {state.etat === "absent" && (
-        <div className="w-full max-w-sm bg-status-absent text-on-primary rounded-lg px-6 py-4 text-center shadow-md">
+        <div className="w-full max-w-sm bg-status-absent text-white rounded-sm px-6 py-4 text-center shadow-md">
           {/* Français LTR */}
           <div dir="ltr">
             <p className="font-semibold">Présentez-vous dans :</p>

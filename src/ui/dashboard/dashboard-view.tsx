@@ -108,15 +108,15 @@ export function DashboardView() {
         />
       )}
 
-      {/* ── Top App Bar ──────────────────────────────────────────────── */}
-      <header className="bg-surface/90 backdrop-blur-md border-b border-primary/20 shadow-sm sticky top-0 z-50 transition-all duration-200">
+      {/* ── Header — dark navy ──────────────────────────────────────── */}
+      <header className="bg-[#0F1F3D] sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-8 py-4 flex items-center justify-between gap-4">
           {/* Nom du cabinet + date */}
-          <div className="min-w-0">
-            <p className="text-2xl font-display font-bold text-primary tracking-tight truncate leading-tight">
+          <div className="min-w-0 flex items-baseline gap-4">
+            <p className="text-xl font-display font-bold text-white tracking-tight truncate leading-tight">
               {state.nom}
             </p>
-            <p className="text-xs font-body text-on-surface-variant capitalize leading-tight font-semibold mt-0.5">
+            <p className="text-xs text-white/35 capitalize font-semibold hidden sm:block">
               {today} · {heure}
             </p>
           </div>
@@ -125,16 +125,16 @@ export function DashboardView() {
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="/settings"
-              className="cursor-pointer p-2 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors duration-200 text-lg"
+              className="cursor-pointer p-2 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors text-lg"
               title="Paramètres"
             >
               ⚙
             </a>
             <button
               onClick={() => setShowNouveauModal(true)}
-              className="cursor-pointer bg-primary hover:bg-primary/90 active:bg-primary/80 text-on-primary font-label font-bold text-xs uppercase tracking-widest px-6 py-2 rounded shadow-sm hover:shadow-md transition-all duration-200"
+              className="cursor-pointer border border-white/25 text-white hover:bg-white hover:text-[#0F1F3D] font-label font-bold text-xs uppercase tracking-[0.15em] px-5 py-2 rounded-sm transition-all"
             >
-              Nouveau patient
+              + Nouveau patient
             </button>
           </div>
         </div>
@@ -189,7 +189,7 @@ export function DashboardView() {
           />
           <div className="flex flex-col gap-2">
             {state.en_attente.length === 0 ? (
-              <div className="text-center py-10 text-on-surface-variant text-sm bg-white rounded border border-outline-variant/40">
+              <div className="text-center py-12 text-on-surface-variant/50 text-sm">
                 File vide — en attente de patients
               </div>
             ) : (

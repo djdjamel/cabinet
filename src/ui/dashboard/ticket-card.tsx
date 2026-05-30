@@ -13,14 +13,23 @@ interface TicketCardProps {
 }
 
 const TYPE_CONFIG: Record<string, { label: string; chip: string }> = {
-  normal:     { label: "Normal",     chip: "text-on-surface-variant bg-surface-container-high" },
-  urgent:     { label: "Urgent",     chip: "text-error bg-error/10" },
-  acte_court: { label: "Acte court", chip: "text-status-consultation bg-status-consultation/5" },
+  normal:     { label: "Normal",     chip: "text-on-surface-variant/70 bg-surface-container" },
+  urgent:     { label: "Urgent",     chip: "text-status-absent bg-status-absent/8" },
+  acte_court: { label: "Acte court", chip: "text-status-consultation bg-status-consultation/8" },
 };
 
-export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onMoveUp, onMoveDown }: TicketCardProps) {
+export function TicketCard({
+  ticket,
+  onAction,
+  onSelect,
+  compact,
+  onAnnonce,
+  onMoveUp,
+  onMoveDown,
+}: TicketCardProps) {
   const cfg = TYPE_CONFIG[ticket.type] ?? TYPE_CONFIG.normal;
   const isEnConsultation = ticket.etat === "en_consultation";
+  const isAppele = ticket.etat === "appele";
   const showReorder = (onMoveUp || onMoveDown) && ticket.etat === "en_attente";
 
   const dureeDepuis = ticket.debut_consult_le
@@ -29,75 +38,105 @@ export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onM
     ? Math.floor((Date.now() - new Date(ticket.appele_le).getTime()) / 60000)
     : Math.floor((Date.now() - new Date(ticket.cree_le).getTime()) / 60000);
 
+  // ── Featured card for patient in consultation ─────────────────────────────
+  if (isEnConsultation) {
+    return (
+      <div className="consultation-card px-6 py-5 flex items-center gap-6">
+        {/* Numéro héro — très grand */}
+        <button
+          onClick={() => onSelect(ticket)}
+          title="Voir le détail"
+          className="text-6xl font-display font-bold tabular-nums text-status-consultation leading-none shrink-0 w-20 text-center cursor-pointer hover:opacity-70 transition-opacity"
+        >
+          {ticket.numero}
+        </button>
+
+        {/* Infos */}
+        <div className="flex-1 min-w-0">
+          <p className="text-xl font-headline font-bold text-on-surface italic leading-snug truncate">
+            {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>}
+          </p>
+          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+            <span className={`text-xs font-label font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm ${cfg.chip}`}>
+              {cfg.label}
+            </span>
+            <span className="text-xs text-on-surface-variant">
+              en consultation · {dureeDepuis} min
+            </span>
+          </div>
+        </div>
+
+        {/* Action */}
+        <button
+          onClick={() => onAction(ticket.id, { action: "terminer" })}
+          className="cursor-pointer shrink-0 border border-status-consultation/40 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-4 py-2 rounded-sm hover:bg-status-consultation hover:text-on-primary transition-colors"
+        >
+          Terminer
+        </button>
+      </div>
+    );
+  }
+
+  // ── Queue row — borderless table style ────────────────────────────────────
   return (
     <div
-      className={`
-        patient-card px-5 py-3 flex flex-row items-center justify-between gap-4
-        ${isEnConsultation
-          ? "border-l-4 border-l-status-consultation"
-          : "group border-l-4 border-l-status-waitlist/50 hover:border-l-status-waitlist"}
-      `}
+      className={`queue-row group flex items-center gap-4 px-2 py-3.5 ${isAppele ? "bg-status-waitlist/5" : ""}`}
     >
-      {/* ── Boutons réordonnancement ─────────────────────────────── */}
+      {/* Réordonnancement */}
       {showReorder && (
         <div className="flex flex-col gap-0.5 shrink-0">
           <button
             onClick={onMoveUp}
             disabled={!onMoveUp}
-            title="Monter dans la file"
-            className="cursor-pointer w-5 h-5 flex items-center justify-center rounded text-on-surface-variant/50 hover:text-on-surface hover:bg-surface-container disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
+            title="Monter"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant/30 hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
           >
             ▲
           </button>
           <button
             onClick={onMoveDown}
             disabled={!onMoveDown}
-            title="Descendre dans la file"
-            className="cursor-pointer w-5 h-5 flex items-center justify-center rounded text-on-surface-variant/50 hover:text-on-surface hover:bg-surface-container disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
+            title="Descendre"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant/30 hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
           >
             ▼
           </button>
         </div>
       )}
 
-      {/* ── Numéro ──────────────────────────────────────────────── */}
+      {/* Numéro — grand, cliquable pour détail */}
       <button
         onClick={() => onSelect(ticket)}
-        title="Voir le détail du ticket"
+        title="Voir le détail"
         className={`
-          text-2xl font-display font-bold tabular-nums w-8 text-center shrink-0 cursor-pointer transition-colors
-          ${isEnConsultation
-            ? "text-status-consultation/40 hover:text-status-consultation"
-            : "text-status-waitlist/40 hover:text-status-waitlist"}
+          text-3xl font-display font-bold tabular-nums leading-none shrink-0 w-12 text-center cursor-pointer transition-opacity hover:opacity-60
+          ${isAppele ? "text-status-waitlist" : "text-on-surface-variant/25"}
         `}
       >
         {ticket.numero}
       </button>
 
-      {/* ── Informations ──────────────────────────────────────────── */}
-      <div className="flex items-center gap-4 flex-grow min-w-0">
-        <span className="text-lg font-headline font-bold text-on-surface italic whitespace-nowrap min-w-[100px] truncate">
-          {ticket.nom_prive ?? (
-            <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>
-          )}
+      {/* Infos patient */}
+      <div className="flex-1 min-w-0 flex items-center gap-4">
+        <span className="font-headline font-bold text-on-surface italic whitespace-nowrap truncate min-w-[100px]">
+          {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant/50">Sans nom</span>}
         </span>
         {!compact && (
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className={`text-xs font-label uppercase font-bold tracking-widest px-2 py-0.5 rounded whitespace-nowrap ${cfg.chip}`}>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className={`text-xs font-label font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${cfg.chip}`}>
               {cfg.label}
             </span>
-            <span className="text-on-surface-variant text-sm">·</span>
-            <span className="text-xs text-on-surface-variant whitespace-nowrap">
-              {isEnConsultation
-                ? `en consultation · ${dureeDepuis} min`
-                : `attend depuis ${dureeDepuis} min`}
+            <span className="text-xs text-on-surface-variant/50">
+              {dureeDepuis} min
             </span>
           </div>
         )}
       </div>
 
-      {/* ── Actions ────────────────────────────────────────────────── */}
-      <Actions ticket={ticket} onAction={onAction} onAnnonce={onAnnonce} />
+      {/* Actions */}
+      <div className="shrink-0">
+        <Actions ticket={ticket} onAction={onAction} onAnnonce={onAnnonce} isAppele={isAppele} />
+      </div>
     </div>
   );
 }
@@ -106,56 +145,43 @@ function Actions({
   ticket,
   onAction,
   onAnnonce,
+  isAppele,
 }: {
   ticket: TicketVue;
   onAction: (id: string, payload: Record<string, unknown>) => void;
   onAnnonce?: (numero: number) => void;
+  isAppele: boolean;
 }) {
-  const { id, etat } = ticket;
+  const { id } = ticket;
 
-  if (etat === "en_attente") {
+  if (!isAppele) {
     return (
       <button
         onClick={() => {
           onAction(id, { action: "appeler" });
           onAnnonce?.(ticket.numero);
         }}
-        className="cursor-pointer shrink-0 text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded text-xs font-label font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1.5"
+        className="cursor-pointer text-primary text-xs font-label font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm border border-primary/20 bg-primary/0 hover:bg-primary hover:text-on-primary opacity-0 group-hover:opacity-100 transition-all"
       >
         Appeler ▸
       </button>
     );
   }
 
-  if (etat === "appele") {
-    return (
-      <div className="flex gap-2 shrink-0">
-        <button
-          onClick={() => onAction(id, { action: "demarrer" })}
-          className="cursor-pointer bg-surface border border-status-consultation/30 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-3 py-1.5 rounded hover:bg-status-consultation hover:text-on-primary transition-colors"
-        >
-          Marquer Entré
-        </button>
-        <button
-          onClick={() => onAction(id, { action: "absent" })}
-          className="cursor-pointer text-on-surface-variant text-xs font-label font-bold uppercase tracking-widest hover:text-status-absent transition-colors px-2 py-1.5"
-        >
-          Absent
-        </button>
-      </div>
-    );
-  }
-
-  if (etat === "en_consultation") {
-    return (
+  return (
+    <div className="flex gap-2">
       <button
-        onClick={() => onAction(id, { action: "terminer" })}
-        className="cursor-pointer shrink-0 bg-surface border border-on-surface/20 text-on-surface text-xs font-label font-bold uppercase tracking-widest px-4 py-1.5 rounded hover:bg-on-surface hover:text-surface transition-colors"
+        onClick={() => onAction(id, { action: "demarrer" })}
+        className="cursor-pointer border border-status-consultation/30 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm hover:bg-status-consultation hover:text-on-primary transition-colors"
       >
-        Terminer ✓
+        Entré ✓
       </button>
-    );
-  }
-
-  return null;
+      <button
+        onClick={() => onAction(id, { action: "absent" })}
+        className="cursor-pointer text-on-surface-variant text-xs font-label font-bold uppercase tracking-widest hover:text-status-absent transition-colors px-2 py-1.5"
+      >
+        Absent
+      </button>
+    </div>
+  );
 }

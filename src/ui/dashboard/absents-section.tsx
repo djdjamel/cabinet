@@ -70,7 +70,7 @@ function AbsentCard({
   const s = (secsLeft % 60).toString().padStart(2, "0");
 
   return (
-    <div className="patient-card px-5 py-3 flex flex-row items-center justify-between gap-4 opacity-75 hover:opacity-100 transition-opacity border-l-4 border-l-status-absent/40">
+    <div className="absent-card px-5 py-3 flex flex-row items-center justify-between gap-4 opacity-70 hover:opacity-100 transition-opacity border-l-4 border-l-status-absent/50">
       {/* Numéro */}
       <button
         onClick={() => onSelect(ticket)}
