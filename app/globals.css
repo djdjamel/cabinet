@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── M3 Design Tokens ───────────────────────────────────────────────────── */
+@theme {
+  --color-primary: #3366cc;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d9e2ff;
+  --color-surface: #faf9fa;
+  --color-on-surface: #1b1c1d;
+  --color-on-surface-variant: #434653;
+  --color-surface-container-low: #f5f3f4;
+  --color-surface-container: #efedee;
+  --color-surface-container-high: #e9e8e9;
+  --color-surface-container-highest: #e3e2e3;
+  --color-outline: #737784;
+  --color-outline-variant: #c3c6d5;
+  --color-status-consultation: #0d9488;
+  --color-status-waitlist: #d97706;
+  --color-status-absent: #e11d48;
+  --color-error: #ba1a1a;
+  --color-secondary: #5a5f63;
+
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-headline: Georgia, "Times New Roman", serif;
+  --font-label: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ── Base ────────────────────────────────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #faf9fa;
+  color: #1b1c1d;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c3c6d5; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #737784; }
+
+/* ── Component utilities ─────────────────────────────────────────────────── */
+@layer components {
+  .patient-card {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-radius: 0.25rem;
+    border: 1px solid rgba(195, 198, 213, 0.4);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .patient-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transform: translateY(-1px);
+  }
+  .metric-card {
+    background: linear-gradient(145deg, #ffffff, #f5f3f4);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(195, 198, 213, 0.5);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 }

@@ -33,15 +33,15 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow p-8">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+    <main className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="w-full max-w-sm bg-white rounded-lg shadow-sm border border-outline-variant/40 p-8">
+        <h1 className="text-2xl font-display font-bold text-center mb-6 text-primary tracking-tight">
           Connexion
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="identifiant" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="identifiant" className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1.5">
               Identifiant
             </label>
             <input
@@ -50,12 +50,12 @@ export default function LoginPage() {
               type="text"
               required
               autoFocus
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-outline-variant rounded px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label htmlFor="mot_de_passe" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="mot_de_passe" className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1.5">
               Mot de passe
             </label>
             <input
@@ -63,12 +63,12 @@ export default function LoginPage() {
               name="mot_de_passe"
               type="password"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-outline-variant rounded px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p className="text-sm text-error bg-error/5 border border-error/20 rounded px-3 py-2">
               {error}
             </p>
           )}
@@ -76,7 +76,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2 rounded-lg transition"
+            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-on-primary font-label font-bold text-xs uppercase tracking-widest py-2.5 rounded shadow-sm transition-all"
           >
             {loading ? "Connexion…" : "Se connecter"}
           </button>

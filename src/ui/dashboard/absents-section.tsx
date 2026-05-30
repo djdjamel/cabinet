@@ -19,20 +19,23 @@ export function AbsentsSection({ absents, onAction, onSelect }: AbsentsSectionPr
       {/* Label cliquable pour replier */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 w-full text-left group"
+        className="flex items-center justify-between w-full text-left pb-2 mb-4 border-b border-surface-container-highest"
       >
-        <span className="w-2 h-2 rounded-full bg-orange-400" />
-        <span className="text-xs font-semibold tracking-widest uppercase text-slate-500 group-hover:text-slate-700 transition-colors">
-          Absents (délai de grâce)
+        <span className="text-xs font-label font-bold text-status-absent uppercase tracking-[0.15em] flex items-center gap-2">
+          <span aria-hidden="true">✗</span>
+          Absents
+          <span className="text-[10px] font-normal text-on-surface-variant normal-case ml-1">(Délai de grâce)</span>
         </span>
-        <span className="ml-1 text-xs font-medium text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
-          {absents.length}
-        </span>
-        <span className="ml-auto text-slate-400 text-xs">{open ? "▾" : "▸"}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-body font-semibold text-status-absent/80 bg-status-absent/10 px-2.5 py-0.5 rounded-full">
+            {absents.length} patient{absents.length !== 1 ? "s" : ""}
+          </span>
+          <span className="text-on-surface-variant text-xs">{open ? "▾" : "▸"}</span>
+        </div>
       </button>
 
       {open && (
-        <div className="mt-2 space-y-2">
+        <div className="flex flex-col gap-2">
           {absents.map((t) => (
             <AbsentCard key={t.id} ticket={t} onAction={onAction} onSelect={onSelect} />
           ))}
@@ -67,39 +70,39 @@ function AbsentCard({
   const s = (secsLeft % 60).toString().padStart(2, "0");
 
   return (
-    <div className="flex items-center gap-4 bg-orange-50 rounded-2xl border border-orange-200 px-4 py-3 transition-all hover:border-orange-300">
-      {/* Numéro héro — même traitement que les autres tickets */}
+    <div className="patient-card px-5 py-3 flex flex-row items-center justify-between gap-4 opacity-75 hover:opacity-100 transition-opacity border-l-4 border-l-status-absent/40">
+      {/* Numéro */}
       <button
         onClick={() => onSelect(ticket)}
         title="Voir le détail du ticket"
-        className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold tabular-nums bg-orange-100 text-orange-800 hover:bg-orange-200 cursor-pointer select-none transition-all duration-150 active:scale-95"
+        className="text-2xl font-display font-bold tabular-nums w-8 text-center shrink-0 text-status-absent/40 hover:text-status-absent cursor-pointer transition-colors"
       >
         {ticket.numero}
       </button>
 
       {/* Infos */}
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-slate-900 truncate leading-snug">
+      <div className="flex items-center gap-4 flex-grow min-w-0">
+        <span className="text-lg font-headline font-bold text-on-surface/70 italic line-through whitespace-nowrap min-w-[100px] truncate">
           {ticket.nom_prive ?? (
-            <span className="text-slate-400 italic font-normal">Sans nom</span>
+            <span className="not-italic no-underline font-normal text-on-surface-variant/70">Sans nom</span>
           )}
-        </p>
-        <p className="text-sm text-orange-600 font-mono tabular-nums mt-0.5">
+        </span>
+        <span className="text-xs font-body font-semibold text-status-absent flex items-center gap-1 bg-status-absent/5 px-2 py-0.5 rounded whitespace-nowrap">
           ⏳ {m}:{s} restantes
-        </p>
+        </span>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 shrink-0">
+      <div className="flex items-center gap-4 shrink-0">
         <button
           onClick={() => onAction(ticket.id, { action: "reintegrer" })}
-          className="cursor-pointer bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white text-sm font-medium px-4 py-2 rounded-full transition-colors"
+          className="cursor-pointer text-on-surface text-xs font-label font-bold uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1 px-2 py-1.5"
         >
-          Réintégrer ↩
+          ↩ Réintégrer
         </button>
         <button
           onClick={() => onAction(ticket.id, { action: "annuler" })}
-          className="cursor-pointer bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-sm font-medium px-4 py-2 rounded-full transition-colors"
+          className="cursor-pointer text-status-absent/80 text-xs font-label font-bold uppercase tracking-widest hover:text-status-absent transition-colors px-2 py-1.5"
         >
           Annuler
         </button>

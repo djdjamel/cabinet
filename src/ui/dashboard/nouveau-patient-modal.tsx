@@ -18,20 +18,20 @@ const TYPES: {
   {
     value: "normal",
     label: "Normal",
-    selected: "bg-blue-700 text-white ring-2 ring-blue-700",
-    unselected: "bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50",
+    selected: "bg-primary text-on-primary ring-2 ring-primary",
+    unselected: "bg-surface text-on-surface ring-1 ring-outline-variant hover:bg-surface-container-low",
   },
   {
     value: "urgent",
     label: "Urgent",
-    selected: "bg-red-600 text-white ring-2 ring-red-600",
-    unselected: "bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50",
+    selected: "bg-error text-on-primary ring-2 ring-error",
+    unselected: "bg-surface text-on-surface ring-1 ring-outline-variant hover:bg-surface-container-low",
   },
   {
     value: "acte_court",
     label: "Acte court",
-    selected: "bg-purple-700 text-white ring-2 ring-purple-700",
-    unselected: "bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50",
+    selected: "bg-status-consultation text-on-primary ring-2 ring-status-consultation",
+    unselected: "bg-surface text-on-surface ring-1 ring-outline-variant hover:bg-surface-container-low",
   },
 ];
 
@@ -56,10 +56,10 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
         <div className="text-center space-y-5">
           {/* Numéro héro */}
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-widest mb-2">
+            <p className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.15em] mb-2">
               Numéro attribué
             </p>
-            <p className="text-7xl font-bold text-blue-700 tabular-nums leading-none">
+            <p className="text-7xl font-display font-bold text-primary tabular-nums leading-none">
               {ticket.numero}
             </p>
           </div>
@@ -70,11 +70,11 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
             <img
               src={ticket.qr}
               alt="QR code patient"
-              className="w-52 h-52 rounded-2xl border border-slate-200 p-2"
+              className="w-52 h-52 rounded-lg border border-outline-variant p-2"
             />
           </div>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-on-surface-variant">
             Le patient scanne ce QR avec son téléphone pour suivre sa position.
           </p>
 
@@ -84,13 +84,13 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
               href={`/print/${ticket.jetonUrl.split("/f/")[1]}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2.5 rounded-full transition-colors"
+              className="flex items-center gap-1.5 border border-outline text-on-surface-variant text-xs font-label font-bold uppercase tracking-widest px-4 py-2.5 rounded hover:bg-surface-container-low transition-colors"
             >
               🖨 Imprimer
             </a>
             <button
               onClick={onClose}
-              className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium px-6 py-2.5 rounded-full transition-colors"
+              className="bg-primary hover:bg-primary/90 text-on-primary text-xs font-label font-bold uppercase tracking-widest px-6 py-2.5 rounded shadow-sm transition-all"
             >
               Fermer
             </button>
@@ -103,12 +103,12 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
   // ── Phase 1 : formulaire ─────────────────────────────────────────────────
   return (
     <Modal onClose={onClose}>
-      <h2 className="text-lg font-semibold text-slate-900 mb-5">Nouveau patient</h2>
+      <h2 className="text-lg font-display font-bold text-on-surface mb-5">Nouveau patient</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Type */}
         <div>
-          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">
+          <label className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-2">
             Type de consultation
           </label>
           <div className="flex gap-2">
@@ -117,7 +117,7 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
                 key={t.value}
                 type="button"
                 onClick={() => setType(t.value)}
-                className={`cursor-pointer flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`cursor-pointer flex-1 py-2 rounded text-xs font-label font-bold uppercase tracking-widest transition-all ${
                   type === t.value ? t.selected : t.unselected
                 }`}
               >
@@ -129,9 +129,9 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
 
         {/* Nom */}
         <div>
-          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">
+          <label className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-2">
             Nom{" "}
-            <span className="text-slate-400 normal-case font-normal">(optionnel)</span>
+            <span className="text-on-surface-variant/60 normal-case font-normal">(optionnel)</span>
           </label>
           <input
             type="text"
@@ -139,7 +139,7 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
             onChange={(e) => setNom(e.target.value)}
             autoFocus
             placeholder="Prénom Nom"
-            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full border border-outline-variant rounded px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
           />
         </div>
 
@@ -148,14 +148,14 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer flex-1 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2.5 rounded-full transition-colors"
+            className="cursor-pointer flex-1 border border-outline text-on-surface-variant text-xs font-label font-bold uppercase tracking-widest py-2.5 rounded hover:bg-surface-container-low transition-colors"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="cursor-pointer flex-1 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 disabled:opacity-50 text-white text-sm font-medium py-2.5 rounded-full transition-colors"
+            className="cursor-pointer flex-1 bg-primary hover:bg-primary/90 active:bg-primary/80 disabled:opacity-50 text-on-primary text-xs font-label font-bold uppercase tracking-widest py-2.5 rounded shadow-sm transition-all"
           >
             {loading ? "Création…" : "Créer le ticket"}
           </button>
@@ -165,7 +165,7 @@ export function NouveauPatientModal({ onClose, onCreer }: NouveauPatientModalPro
   );
 }
 
-// ── Wrapper modal MD3 (Dialog) ────────────────────────────────────────────────
+// ── Wrapper modal ─────────────────────────────────────────────────────────────
 
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
@@ -174,12 +174,12 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="cursor-pointer absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+          className="cursor-pointer absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"
         >
           ✕
         </button>

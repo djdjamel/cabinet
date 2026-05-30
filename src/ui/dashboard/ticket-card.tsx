@@ -12,11 +12,10 @@ interface TicketCardProps {
   onMoveDown?: () => void;
 }
 
-// MD3 container colors par type
-const TYPE_CONFIG: Record<string, { label: string; badge: string; badgeHover: string; chip: string }> = {
-  normal:     { label: "Normal",     badge: "bg-blue-100 text-blue-800",     badgeHover: "hover:bg-blue-200",   chip: "bg-blue-100 text-blue-700" },
-  urgent:     { label: "Urgent",     badge: "bg-red-100 text-red-800",       badgeHover: "hover:bg-red-200",    chip: "bg-red-100 text-red-700" },
-  acte_court: { label: "Acte court", badge: "bg-purple-100 text-purple-800", badgeHover: "hover:bg-purple-200", chip: "bg-purple-100 text-purple-700" },
+const TYPE_CONFIG: Record<string, { label: string; chip: string }> = {
+  normal:     { label: "Normal",     chip: "text-on-surface-variant bg-surface-container-high" },
+  urgent:     { label: "Urgent",     chip: "text-error bg-error/10" },
+  acte_court: { label: "Acte court", chip: "text-status-consultation bg-status-consultation/5" },
 };
 
 export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onMoveUp, onMoveDown }: TicketCardProps) {
@@ -33,10 +32,10 @@ export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onM
   return (
     <div
       className={`
-        flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-150
+        patient-card px-5 py-3 flex flex-row items-center justify-between gap-4
         ${isEnConsultation
-          ? "bg-green-50 border-green-200 shadow-sm"
-          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"}
+          ? "border-l-4 border-l-status-consultation"
+          : "group border-l-4 border-l-status-waitlist/50 hover:border-l-status-waitlist"}
       `}
     >
       {/* ── Boutons réordonnancement ─────────────────────────────── */}
@@ -46,7 +45,7 @@ export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onM
             onClick={onMoveUp}
             disabled={!onMoveUp}
             title="Monter dans la file"
-            className="cursor-pointer w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center rounded text-on-surface-variant/50 hover:text-on-surface hover:bg-surface-container disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
           >
             ▲
           </button>
@@ -54,47 +53,44 @@ export function TicketCard({ ticket, onAction, onSelect, compact, onAnnonce, onM
             onClick={onMoveDown}
             disabled={!onMoveDown}
             title="Descendre dans la file"
-            className="cursor-pointer w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center rounded text-on-surface-variant/50 hover:text-on-surface hover:bg-surface-container disabled:opacity-20 disabled:cursor-default transition-colors text-xs"
           >
             ▼
           </button>
         </div>
       )}
 
-      {/* ── Numéro héro ─────────────────────────────────────────── */}
+      {/* ── Numéro ──────────────────────────────────────────────── */}
       <button
         onClick={() => onSelect(ticket)}
         title="Voir le détail du ticket"
         className={`
-          shrink-0 w-14 h-14 rounded-xl
-          flex items-center justify-center
-          text-2xl font-bold tabular-nums
-          cursor-pointer select-none
-          ring-2 ring-transparent
-          transition-all duration-150
-          active:scale-95
-          ${cfg.badge} ${cfg.badgeHover}
+          text-2xl font-display font-bold tabular-nums w-8 text-center shrink-0 cursor-pointer transition-colors
+          ${isEnConsultation
+            ? "text-status-consultation/40 hover:text-status-consultation"
+            : "text-status-waitlist/40 hover:text-status-waitlist"}
         `}
       >
         {ticket.numero}
       </button>
 
       {/* ── Informations ──────────────────────────────────────────── */}
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-slate-900 truncate leading-snug">
+      <div className="flex items-center gap-4 flex-grow min-w-0">
+        <span className="text-lg font-headline font-bold text-on-surface italic whitespace-nowrap min-w-[100px] truncate">
           {ticket.nom_prive ?? (
-            <span className="text-slate-400 italic font-normal">Sans nom</span>
+            <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>
           )}
-        </p>
+        </span>
         {!compact && (
-          <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cfg.chip}`}>
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className={`text-xs font-label uppercase font-bold tracking-widest px-2 py-0.5 rounded whitespace-nowrap ${cfg.chip}`}>
               {cfg.label}
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-on-surface-variant text-sm">·</span>
+            <span className="text-xs text-on-surface-variant whitespace-nowrap">
               {isEnConsultation
                 ? `en consultation · ${dureeDepuis} min`
-                : `attend · ${dureeDepuis} min`}
+                : `attend depuis ${dureeDepuis} min`}
             </span>
           </div>
         )}
@@ -124,7 +120,7 @@ function Actions({
           onAction(id, { action: "appeler" });
           onAnnonce?.(ticket.numero);
         }}
-        className="cursor-pointer shrink-0 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white text-sm font-medium px-5 py-2 rounded-full transition-colors"
+        className="cursor-pointer shrink-0 text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded text-xs font-label font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1.5"
       >
         Appeler ▸
       </button>
@@ -136,13 +132,13 @@ function Actions({
       <div className="flex gap-2 shrink-0">
         <button
           onClick={() => onAction(id, { action: "demarrer" })}
-          className="cursor-pointer bg-green-100 hover:bg-green-200 active:bg-green-300 text-green-800 text-sm font-medium px-4 py-2 rounded-full transition-colors"
+          className="cursor-pointer bg-surface border border-status-consultation/30 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-3 py-1.5 rounded hover:bg-status-consultation hover:text-on-primary transition-colors"
         >
-          Entré ✓
+          Marquer Entré
         </button>
         <button
           onClick={() => onAction(id, { action: "absent" })}
-          className="cursor-pointer bg-orange-100 hover:bg-orange-200 active:bg-orange-300 text-orange-800 text-sm font-medium px-4 py-2 rounded-full transition-colors"
+          className="cursor-pointer text-on-surface-variant text-xs font-label font-bold uppercase tracking-widest hover:text-status-absent transition-colors px-2 py-1.5"
         >
           Absent
         </button>
@@ -154,7 +150,7 @@ function Actions({
     return (
       <button
         onClick={() => onAction(id, { action: "terminer" })}
-        className="cursor-pointer shrink-0 bg-slate-800 hover:bg-slate-900 active:bg-black text-white text-sm font-medium px-5 py-2 rounded-full transition-colors"
+        className="cursor-pointer shrink-0 bg-surface border border-on-surface/20 text-on-surface text-xs font-label font-bold uppercase tracking-widest px-4 py-1.5 rounded hover:bg-on-surface hover:text-surface transition-colors"
       >
         Terminer ✓
       </button>

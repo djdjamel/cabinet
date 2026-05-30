@@ -37,7 +37,7 @@ export function SalleView({ cabinetId }: { cabinetId: string }) {
 
       {/* En-tête cabinet */}
       <div className="text-center py-5 border-b border-gray-700">
-        <h1 className="text-2xl font-semibold text-gray-300 tracking-wide">
+        <h1 className="text-2xl font-display font-semibold text-gray-300 tracking-wide">
           {data.cabinetNom}
         </h1>
       </div>
@@ -51,7 +51,7 @@ export function SalleView({ cabinetId }: { cabinetId: string }) {
             En consultation / في الاستشارة
           </p>
           {data.enCours ? (
-            <p className="text-[12rem] font-bold leading-none tabular-nums text-green-400">
+            <p className="text-[12rem] font-display font-bold leading-none tabular-nums text-status-consultation">
               {data.enCours.numero}
             </p>
           ) : (
@@ -61,11 +61,11 @@ export function SalleView({ cabinetId }: { cabinetId: string }) {
 
         {/* Numéro appelé (en attente de réponse) */}
         {data.appele && (
-          <div className="text-center bg-blue-950 border border-blue-700 rounded-3xl px-20 py-8">
-            <p className="text-base uppercase tracking-widest text-blue-400 mb-3">
+          <div className="text-center bg-primary/10 border border-primary/30 rounded-xl px-20 py-8">
+            <p className="text-base uppercase tracking-widest text-primary/70 mb-3 font-label">
               Appelé / تم استدعاؤه
             </p>
-            <p className="text-7xl font-bold tabular-nums text-blue-300">
+            <p className="text-7xl font-display font-bold tabular-nums text-primary/90">
               {data.appele.numero}
             </p>
           </div>

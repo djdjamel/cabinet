@@ -56,28 +56,28 @@ export function SettingsView() {
 
   if (!loaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
+      <div className="min-h-screen flex items-center justify-center text-on-surface-variant bg-surface">
         Chargement…
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-surface">
+      <div className="max-w-lg mx-auto px-6 py-8 space-y-6">
 
         {/* En-tête */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/dashboard")}
-            className="cursor-pointer text-sm text-gray-500 hover:text-gray-700"
+            className="cursor-pointer text-sm text-on-surface-variant hover:text-primary font-label font-semibold transition-colors"
           >
             ← Tableau de bord
           </button>
-          <h1 className="text-lg font-bold text-gray-800">Paramètres</h1>
+          <h1 className="text-2xl font-display font-bold text-on-surface tracking-tight">Paramètres</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white border border-outline-variant/40 rounded-lg shadow-sm p-6 space-y-6">
 
           {/* Nom du cabinet */}
           <Field label="Nom du cabinet">
@@ -86,7 +86,7 @@ export function SettingsView() {
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-outline-variant rounded px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </Field>
 
@@ -98,13 +98,13 @@ export function SettingsView() {
               max={120}
               value={duree}
               onChange={(e) => setDuree(Math.max(1, Number(e.target.value)))}
-              className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-28 border border-outline-variant rounded px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </Field>
 
           {/* Modules */}
           <div className="space-y-4">
-            <p className="text-sm font-medium text-gray-700">Modules optionnels</p>
+            <p className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em]">Modules optionnels</p>
 
             <Toggle
               label="Annonces vocales"
@@ -129,7 +129,7 @@ export function SettingsView() {
           <button
             type="submit"
             disabled={saving}
-            className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2 rounded-lg text-sm transition"
+            className="cursor-pointer w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-on-primary font-label font-bold text-xs uppercase tracking-widest py-2.5 rounded shadow-sm transition-all"
           >
             {saved ? "✓ Enregistré" : saving ? "Enregistrement…" : "Enregistrer"}
           </button>
@@ -142,7 +142,7 @@ export function SettingsView() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1.5">{label}</label>
       {children}
     </div>
   );
@@ -166,7 +166,7 @@ function Toggle({
         onClick={() => onChange(!checked)}
         aria-pressed={checked}
         className={`cursor-pointer relative shrink-0 w-10 h-6 rounded-full transition-colors ${
-          checked ? "bg-blue-600" : "bg-gray-200"
+          checked ? "bg-primary" : "bg-surface-container-high"
         }`}
       >
         <span
@@ -176,8 +176,8 @@ function Toggle({
         />
       </button>
       <div>
-        <p className="text-sm font-medium text-gray-800">{label}</p>
-        <p className="text-xs text-gray-500">{description}</p>
+        <p className="text-sm font-medium text-on-surface">{label}</p>
+        <p className="text-xs text-on-surface-variant">{description}</p>
       </div>
     </div>
   );
