@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@infrastructure/auth/session";
 import { prismaTicketRepository, purgeOldTickets } from "@infrastructure/prisma/ticket-repository";
-import { getCabinetParams } from "@infrastructure/prisma/cabinet-repository";
+import { getCabinetParams, getCabinetNom } from "@infrastructure/prisma/cabinet-repository";
 import { realClock } from "@infrastructure/clock";
 import { tokenGenerator } from "@infrastructure/qr/token";
 import { generateQRDataUrl } from "@infrastructure/qr/qr-generator";
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Type invalide" }, { status: 400 });
   }
 
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? 3001}`;
 
   const result = await enregistrerPatient(
     { repo: prismaTicketRepository, clock: realClock, token: tokenGenerator },
@@ -77,7 +77,10 @@ export async function GET() {
   // Expiration lazy : passe les absents expirés en "expire" avant de retourner la file
   await expirerAbsents(prismaTicketRepository, realClock);
 
-  const params = await getCabinetParams(session.cabinetId);
+  const [params, nom] = await Promise.all([
+    getCabinetParams(session.cabinetId),
+    getCabinetNom(session.cabinetId),
+  ]);
   const file = await obtenirFile(
     prismaTicketRepository,
     realClock,
@@ -85,5 +88,5 @@ export async function GET() {
     params.duree_moyenne_min
   );
 
-  return NextResponse.json({ ...file, params });
+  return NextResponse.json({ ...file, params, nom });
 }

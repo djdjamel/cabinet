@@ -7,6 +7,7 @@ export interface TicketVue {
   type: Ticket["type"];
   etat: Ticket["etat"];
   nom_prive: string | null;
+  jeton_public: string;
   ordre: number;
   position: number;
   attente_estimee_min: [number, number];
@@ -44,6 +45,7 @@ export async function obtenirFile(
       type: t.type,
       etat: t.etat,
       nom_prive: t.nom_prive,
+      jeton_public: t.jeton_public,
       ordre: t.ordre,
       position: calculerPosition(t, tickets),
       attente_estimee_min: estimerAttente(t, tickets, dureeMoyenneMin),

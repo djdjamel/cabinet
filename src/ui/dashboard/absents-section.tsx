@@ -15,16 +15,20 @@ export function AbsentsSection({ absents, onAction, onSelect }: AbsentsSectionPr
   if (absents.length === 0) return null;
 
   return (
-    <div className="mt-4">
+    <section>
+      {/* Label cliquable pour replier */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-800 w-full text-left"
+        className="flex items-center gap-2 w-full text-left group"
       >
-        <span>{open ? "▾" : "▸"}</span>
-        <span>ABSENTS (en délai)</span>
-        <span className="ml-auto bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">
+        <span className="w-2 h-2 rounded-full bg-orange-400" />
+        <span className="text-xs font-semibold tracking-widest uppercase text-slate-500 group-hover:text-slate-700 transition-colors">
+          Absents (délai de grâce)
+        </span>
+        <span className="ml-1 text-xs font-medium text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
           {absents.length}
         </span>
+        <span className="ml-auto text-slate-400 text-xs">{open ? "▾" : "▸"}</span>
       </button>
 
       {open && (
@@ -34,7 +38,7 @@ export function AbsentsSection({ absents, onAction, onSelect }: AbsentsSectionPr
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -49,7 +53,6 @@ function AbsentCard({
 }) {
   const [secsLeft, setSecsLeft] = useState(ticket.grace_restante_sec ?? 0);
 
-  // Décompte local
   useEffect(() => {
     setSecsLeft(ticket.grace_restante_sec ?? 0);
   }, [ticket.grace_restante_sec]);
@@ -64,33 +67,39 @@ function AbsentCard({
   const s = (secsLeft % 60).toString().padStart(2, "0");
 
   return (
-    <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3">
+    <div className="flex items-center gap-4 bg-orange-50 rounded-2xl border border-orange-200 px-4 py-3 transition-all hover:border-orange-300">
+      {/* Numéro héro — même traitement que les autres tickets */}
       <button
         onClick={() => onSelect(ticket)}
-        className="text-xl font-bold text-orange-600 hover:text-orange-800 w-10 text-left tabular-nums shrink-0"
+        title="Voir le détail du ticket"
+        className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold tabular-nums bg-orange-100 text-orange-800 hover:bg-orange-200 cursor-pointer select-none transition-all duration-150 active:scale-95"
       >
         {ticket.numero}
       </button>
 
+      {/* Infos */}
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-800 truncate">
-          {ticket.nom_prive ?? <span className="text-gray-400 italic">Sans nom</span>}
+        <p className="font-medium text-slate-900 truncate leading-snug">
+          {ticket.nom_prive ?? (
+            <span className="text-slate-400 italic font-normal">Sans nom</span>
+          )}
         </p>
-        <p className="text-sm text-orange-600 font-mono tabular-nums">
+        <p className="text-sm text-orange-600 font-mono tabular-nums mt-0.5">
           ⏳ {m}:{s} restantes
         </p>
       </div>
 
+      {/* Actions */}
       <div className="flex gap-2 shrink-0">
         <button
           onClick={() => onAction(ticket.id, { action: "reintegrer" })}
-          className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition"
+          className="cursor-pointer bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white text-sm font-medium px-4 py-2 rounded-full transition-colors"
         >
           Réintégrer ↩
         </button>
         <button
           onClick={() => onAction(ticket.id, { action: "annuler" })}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg transition"
+          className="cursor-pointer bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-sm font-medium px-4 py-2 rounded-full transition-colors"
         >
           Annuler
         </button>

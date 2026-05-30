@@ -70,7 +70,7 @@ export function SettingsView() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/dashboard")}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="cursor-pointer text-sm text-gray-500 hover:text-gray-700"
           >
             ← Tableau de bord
           </button>
@@ -86,7 +86,7 @@ export function SettingsView() {
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </Field>
 
@@ -98,7 +98,7 @@ export function SettingsView() {
               max={120}
               value={duree}
               onChange={(e) => setDuree(Math.max(1, Number(e.target.value)))}
-              className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </Field>
 
@@ -129,7 +129,7 @@ export function SettingsView() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2 rounded-lg text-sm transition"
+            className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2 rounded-lg text-sm transition"
           >
             {saved ? "✓ Enregistré" : saving ? "Enregistrement…" : "Enregistrer"}
           </button>
@@ -165,7 +165,7 @@ function Toggle({
         type="button"
         onClick={() => onChange(!checked)}
         aria-pressed={checked}
-        className={`relative shrink-0 w-10 h-6 rounded-full transition-colors ${
+        className={`cursor-pointer relative shrink-0 w-10 h-6 rounded-full transition-colors ${
           checked ? "bg-blue-600" : "bg-gray-200"
         }`}
       >

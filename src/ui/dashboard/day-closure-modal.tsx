@@ -27,13 +27,13 @@ export function DayClosureModal({ staleDate, onCloturer, onContinuer }: DayClosu
         <div className="space-y-3">
           <button
             onClick={onCloturer}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition"
+            className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition"
           >
             Clôturer et commencer aujourd'hui
           </button>
           <button
             onClick={onContinuer}
-            className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+            className="cursor-pointer w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
           >
             Continuer la journée précédente
           </button>

@@ -8,6 +8,7 @@ export type { TicketVue };
 
 export interface DashboardState extends FileVue {
   params: CabinetParams;
+  nom: string;
 }
 
 export type ConnectionStatus = "connected" | "reconnecting";
@@ -66,5 +67,13 @@ export function useDashboard(pollInterval = 4000) {
     await fetchFile();
   }
 
-  return { state, status, action, creerTicket, cloturerJournee };
+  async function moveTickets(id1: string, ordre1: number, id2: string, ordre2: number) {
+    await Promise.all([
+      fetch(`/api/tickets/${id1}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ordre: ordre1 }) }),
+      fetch(`/api/tickets/${id2}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ordre: ordre2 }) }),
+    ]);
+    await fetchFile();
+  }
+
+  return { state, status, action, creerTicket, cloturerJournee, moveTickets };
 }

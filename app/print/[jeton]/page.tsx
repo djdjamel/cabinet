@@ -13,7 +13,7 @@ export default async function PrintPage({ params }: Props) {
   const ticket = await prismaTicketRepository.findByJeton(jeton);
   if (!ticket) notFound();
 
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? 3001}`;
   const jetonUrl = `${baseUrl}/f/${jeton}`;
 
   const [qrSvg, cabinetNom] = await Promise.all([
