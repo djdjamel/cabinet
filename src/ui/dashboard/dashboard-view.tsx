@@ -218,6 +218,14 @@ export function DashboardView() {
               )}
             </div>
           </section>
+
+          {/* ABSENTS */}
+          <AbsentsSection
+            absents={state.absents}
+            onAction={action}
+            onSelect={setSelectedTicket}
+            afficherNom={state.params.afficher_nom}
+          />
         </div>
 
         {/* ── Sidebar droite ───────────────────────────────────────── */}
@@ -242,15 +250,6 @@ export function DashboardView() {
               />
             </section>
           )}
-
-          {/* ABSENTS */}
-          <AbsentsSection
-            absents={state.absents}
-            onAction={action}
-            onSelect={setSelectedTicket}
-            compact
-            afficherNom={state.params.afficher_nom}
-          />
 
           {/* MÉTRIQUES (bas de sidebar) */}
           {state.params.metriques && (

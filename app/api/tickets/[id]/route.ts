@@ -8,7 +8,7 @@ import { realClock as clock } from "@infrastructure/clock";
 import { appelerTicket } from "@application/tickets/appeler-ticket";
 import { demarrerConsultation } from "@application/tickets/demarrer-consultation";
 import { terminerConsultation } from "@application/tickets/terminer-consultation";
-import { marquerAbsent } from "@application/tickets/marquer-absent";
+import { marquerAbsentEtRemplir } from "@application/tickets/marquer-absent-fill";
 import { reintegrerPatient } from "@application/tickets/reintegrer-patient";
 import { annulerTicket } from "@application/tickets/annuler-ticket";
 import { reordonnerTicket } from "@application/tickets/reordonner-ticket";
@@ -44,7 +44,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     } else if (action === "terminer") {
       ticket = await terminerConsultation(repo, clock, id, cabinetId);
     } else if (action === "absent") {
-      ticket = await marquerAbsent(repo, clock, id, cabinetId, cabinetParams.delai_grace_min);
+      ticket = await marquerAbsentEtRemplir(repo, clock, id, cabinetId, cabinetParams.delai_grace_min);
     } else if (action === "reintegrer") {
       ticket = await reintegrerPatient(
         repo, clock, id, cabinetId,
