@@ -47,7 +47,6 @@ export function DashboardView() {
     month: "long",
   });
 
-  // Réordonnancement : échange les ordres de deux tickets adjacents
   function moveTicket(ticket: TicketVue, direction: "up" | "down") {
     if (!state) return;
     const list = state.en_attente;
@@ -110,7 +109,7 @@ export function DashboardView() {
 
       {/* ── Header — dark navy ──────────────────────────────────────── */}
       <header className="bg-[#0F1F3D] sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-8 py-4 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between gap-4">
           {/* Nom du cabinet + date */}
           <div className="min-w-0 flex items-baseline gap-4">
             <p className="text-xl font-display font-bold text-white tracking-tight truncate leading-tight">
@@ -140,80 +139,90 @@ export function DashboardView() {
         </div>
       </header>
 
-      {/* ── Contenu principal ────────────────────────────────────────── */}
-      <main className="max-w-5xl mx-auto px-8 py-8 flex flex-col gap-10">
+      {/* ── Contenu principal — 2 colonnes ──────────────────────────── */}
+      <main className="max-w-6xl mx-auto px-8 py-8 flex flex-col lg:flex-row gap-8">
 
-        {/* Métriques (optionnelles) */}
-        {state.params.metriques && (
-          <section aria-labelledby="metrics-heading">
+        {/* ── Colonne gauche : workflow principal ──────────────────── */}
+        <div className="flex-1 min-w-0 flex flex-col gap-8">
+
+          {/* EN CONSULTATION */}
+          {state.en_cours && (
+            <section aria-labelledby="consultation-heading">
+              <SectionLabel
+                id="consultation-heading"
+                icon="⚕"
+                text="En Consultation"
+                count={1}
+                color="text-status-consultation"
+                countColor="text-status-consultation/80 bg-status-consultation/10"
+              />
+              <TicketCard
+                ticket={state.en_cours}
+                isFeatured
+                onAction={action}
+                onSelect={setSelectedTicket}
+                onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
+              />
+            </section>
+          )}
+
+          {/* FILE D'ATTENTE */}
+          <section aria-labelledby="queue-heading">
             <SectionLabel
-              id="metrics-heading"
-              icon="📊"
-              text="Métriques du jour"
-              color="text-primary"
-              countColor=""
+              id="queue-heading"
+              icon="⏳"
+              text="File d'Attente"
+              count={state.en_attente.length}
+              color="text-status-waitlist"
+              countColor="text-status-waitlist/80 bg-status-waitlist/10"
             />
-            <MetricsPanel />
+            <div className="flex flex-col gap-2">
+              {state.en_attente.length === 0 ? (
+                <div className="text-center py-12 text-on-surface-variant/50 text-sm">
+                  File vide — en attente de patients
+                </div>
+              ) : (
+                state.en_attente.map((t, idx) => (
+                  <TicketCard
+                    key={t.id}
+                    ticket={t}
+                    onAction={action}
+                    onSelect={setSelectedTicket}
+                    onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
+                    onMoveUp={idx > 0 ? () => moveTicket(t, "up") : undefined}
+                    onMoveDown={idx < state.en_attente.length - 1 ? () => moveTicket(t, "down") : undefined}
+                  />
+                ))
+              )}
+            </div>
           </section>
-        )}
+        </div>
 
-        {/* EN CONSULTATION */}
-        {state.en_cours && (
-          <section aria-labelledby="consultation-heading">
-            <SectionLabel
-              id="consultation-heading"
-              icon="⚕"
-              text="En Consultation"
-              count={1}
-              color="text-status-consultation"
-              countColor="text-status-consultation/80 bg-status-consultation/10"
-            />
-            <TicketCard
-              ticket={state.en_cours}
-              onAction={action}
-              onSelect={setSelectedTicket}
-              onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
-            />
-          </section>
-        )}
+        {/* ── Sidebar droite : infos secondaires ──────────────────── */}
+        <div className="w-full lg:w-72 shrink-0 flex flex-col gap-6">
 
-        {/* FILE D'ATTENTE */}
-        <section aria-labelledby="queue-heading">
-          <SectionLabel
-            id="queue-heading"
-            icon="⏳"
-            text="File d'Attente"
-            count={state.en_attente.length}
-            color="text-status-waitlist"
-            countColor="text-status-waitlist/80 bg-status-waitlist/10"
+          {/* MÉTRIQUES */}
+          {state.params.metriques && (
+            <section aria-labelledby="metrics-heading">
+              <SectionLabel
+                id="metrics-heading"
+                icon="📊"
+                text="Métriques"
+                color="text-primary"
+                countColor=""
+              />
+              <MetricsPanel />
+            </section>
+          )}
+
+          {/* ABSENTS */}
+          <AbsentsSection
+            absents={state.absents}
+            onAction={action}
+            onSelect={setSelectedTicket}
+            compact
           />
-          <div className="flex flex-col gap-2">
-            {state.en_attente.length === 0 ? (
-              <div className="text-center py-12 text-on-surface-variant/50 text-sm">
-                File vide — en attente de patients
-              </div>
-            ) : (
-              state.en_attente.map((t, idx) => (
-                <TicketCard
-                  key={t.id}
-                  ticket={t}
-                  onAction={action}
-                  onSelect={setSelectedTicket}
-                  onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
-                  onMoveUp={idx > 0 ? () => moveTicket(t, "up") : undefined}
-                  onMoveDown={idx < state.en_attente.length - 1 ? () => moveTicket(t, "down") : undefined}
-                />
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* ABSENTS */}
-        <AbsentsSection
-          absents={state.absents}
-          onAction={action}
-          onSelect={setSelectedTicket}
-        />
+        </div>
       </main>
     </div>
   );

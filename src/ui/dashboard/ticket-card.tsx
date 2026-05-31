@@ -7,6 +7,7 @@ interface TicketCardProps {
   onAction: (id: string, payload: Record<string, unknown>) => void;
   onSelect: (ticket: TicketVue) => void;
   compact?: boolean;
+  isFeatured?: boolean;
   onAnnonce?: (numero: number) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -18,18 +19,26 @@ const TYPE_CONFIG: Record<string, { label: string; chip: string }> = {
   acte_court: { label: "Acte court", chip: "text-status-consultation bg-status-consultation/8" },
 };
 
+function formatDuree(min: number): string {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m > 0 ? `${h}h${m.toString().padStart(2, "0")}` : `${h}h`;
+}
+
 export function TicketCard({
   ticket,
   onAction,
   onSelect,
   compact,
+  isFeatured,
   onAnnonce,
   onMoveUp,
   onMoveDown,
 }: TicketCardProps) {
   const cfg = TYPE_CONFIG[ticket.type] ?? TYPE_CONFIG.normal;
-  const isEnConsultation = ticket.etat === "en_consultation";
   const isAppele = ticket.etat === "appele";
+  const isEnConsultation = ticket.etat === "en_consultation";
   const showReorder = (onMoveUp || onMoveDown) && ticket.etat === "en_attente";
 
   const dureeDepuis = ticket.debut_consult_le
@@ -38,20 +47,23 @@ export function TicketCard({
     ? Math.floor((Date.now() - new Date(ticket.appele_le).getTime()) / 60000)
     : Math.floor((Date.now() - new Date(ticket.cree_le).getTime()) / 60000);
 
-  // ── Featured card for patient in consultation ─────────────────────────────
-  if (isEnConsultation) {
+  // ── Featured card (en_cours patient — appele or en_consultation) ──────────
+  if (isFeatured) {
+    const colorClasses = isEnConsultation
+      ? "bg-status-consultation/5 border border-status-consultation/20 border-l-4 border-l-status-consultation"
+      : "bg-status-waitlist/5 border border-status-waitlist/20 border-l-4 border-l-status-waitlist";
+    const numColor = isEnConsultation ? "text-status-consultation" : "text-status-waitlist";
+
     return (
-      <div className="consultation-card px-6 py-5 flex items-center gap-6">
-        {/* Numéro héro — très grand */}
+      <div className={`rounded-lg px-6 py-5 flex items-center gap-6 ${colorClasses}`}>
         <button
           onClick={() => onSelect(ticket)}
           title="Voir le détail"
-          className="text-6xl font-display font-bold tabular-nums text-status-consultation leading-none shrink-0 w-20 text-center cursor-pointer hover:opacity-70 transition-opacity"
+          className={`text-6xl font-display font-bold tabular-nums leading-none shrink-0 w-20 text-center cursor-pointer hover:opacity-70 transition-opacity ${numColor}`}
         >
           {ticket.numero}
         </button>
 
-        {/* Infos */}
         <div className="flex-1 min-w-0">
           <p className="text-xl font-headline font-bold text-on-surface italic leading-snug truncate">
             {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>}
@@ -61,18 +73,12 @@ export function TicketCard({
               {cfg.label}
             </span>
             <span className="text-xs text-on-surface-variant">
-              en consultation · {dureeDepuis} min
+              {isEnConsultation ? "en consultation" : "appelé"} · {formatDuree(dureeDepuis)}
             </span>
           </div>
         </div>
 
-        {/* Action */}
-        <button
-          onClick={() => onAction(ticket.id, { action: "terminer" })}
-          className="cursor-pointer shrink-0 border border-status-consultation/40 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-4 py-2 rounded-sm hover:bg-status-consultation hover:text-on-primary transition-colors"
-        >
-          Terminer
-        </button>
+        <Actions ticket={ticket} onAction={onAction} onAnnonce={onAnnonce} isAppele={isAppele} />
       </div>
     );
   }
@@ -104,7 +110,7 @@ export function TicketCard({
         </div>
       )}
 
-      {/* Numéro — grand, cliquable pour détail */}
+      {/* Numéro */}
       <button
         onClick={() => onSelect(ticket)}
         title="Voir le détail"
@@ -127,7 +133,7 @@ export function TicketCard({
               {cfg.label}
             </span>
             <span className="text-xs text-on-surface-variant/50">
-              {dureeDepuis} min
+              {formatDuree(dureeDepuis)}
             </span>
           </div>
         )}
@@ -153,6 +159,17 @@ function Actions({
   isAppele: boolean;
 }) {
   const { id } = ticket;
+
+  if (ticket.etat === "en_consultation") {
+    return (
+      <button
+        onClick={() => onAction(id, { action: "terminer" })}
+        className="cursor-pointer shrink-0 border border-status-consultation/40 text-status-consultation text-xs font-label font-bold uppercase tracking-widest px-4 py-2 rounded-sm hover:bg-status-consultation hover:text-on-primary transition-colors"
+      >
+        Terminer
+      </button>
+    );
+  }
 
   if (!isAppele) {
     return (
