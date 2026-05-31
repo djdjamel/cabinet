@@ -120,7 +120,7 @@ export function TicketCard({
         title="Voir le détail"
         className={`
           text-3xl font-display font-bold tabular-nums leading-none shrink-0 w-12 text-center cursor-pointer transition-opacity hover:opacity-60
-          ${isAppele ? "text-status-waitlist" : "text-on-surface-variant/25"}
+          ${isAppele ? "text-status-waitlist" : "text-on-surface-variant/60"}
         `}
       >
         {ticket.numero}
