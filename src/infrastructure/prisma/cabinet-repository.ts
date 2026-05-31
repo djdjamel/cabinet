@@ -16,7 +16,7 @@ const DEFAULT_PARAMS: CabinetParams = {
   delai_grace_min: 30,
   decalage_reintegration: 2,
   max_reintegrations: 1,
-  afficher_nom: true,
+  afficher_nom: false,
   annonce_vocale: false,
   ecran_salle: false,
   metriques: false,

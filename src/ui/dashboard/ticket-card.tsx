@@ -8,6 +8,7 @@ interface TicketCardProps {
   onSelect: (ticket: TicketVue) => void;
   compact?: boolean;
   isFeatured?: boolean;
+  afficherNom?: boolean;
   onAnnonce?: (numero: number) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -32,6 +33,7 @@ export function TicketCard({
   onSelect,
   compact,
   isFeatured,
+  afficherNom,
   onAnnonce,
   onMoveUp,
   onMoveDown,
@@ -47,7 +49,7 @@ export function TicketCard({
     ? Math.floor((Date.now() - new Date(ticket.appele_le).getTime()) / 60000)
     : Math.floor((Date.now() - new Date(ticket.cree_le).getTime()) / 60000);
 
-  // ── Featured card (en_cours patient — appele or en_consultation) ──────────
+  // ── Featured card (en_cours — appele or en_consultation) ─────────────────
   if (isFeatured) {
     const colorClasses = isEnConsultation
       ? "bg-status-consultation/5 border border-status-consultation/20 border-l-4 border-l-status-consultation"
@@ -65,10 +67,12 @@ export function TicketCard({
         </button>
 
         <div className="flex-1 min-w-0">
-          <p className="text-xl font-headline font-bold text-on-surface italic leading-snug truncate">
-            {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>}
-          </p>
-          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          {afficherNom && (
+            <p className="text-xl font-headline font-bold text-on-surface italic leading-snug truncate mb-1.5">
+              {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>}
+            </p>
+          )}
+          <div className="flex items-center gap-3 flex-wrap">
             <span className={`text-xs font-label font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm ${cfg.chip}`}>
               {cfg.label}
             </span>
@@ -83,19 +87,19 @@ export function TicketCard({
     );
   }
 
-  // ── Queue row — borderless table style ────────────────────────────────────
+  // ── Queue row — compact borderless ───────────────────────────────────────
   return (
     <div
-      className={`queue-row group flex items-center gap-4 px-2 py-3.5 ${isAppele ? "bg-status-waitlist/5" : ""}`}
+      className={`queue-row group flex items-center gap-3 px-2 py-2 ${isAppele ? "bg-status-waitlist/5" : ""}`}
     >
-      {/* Réordonnancement */}
+      {/* Réordonnancement — invisible par défaut, visible au survol */}
       {showReorder && (
-        <div className="flex flex-col gap-0.5 shrink-0">
+        <div className="flex flex-col gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={onMoveUp}
             disabled={!onMoveUp}
             title="Monter"
-            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant/30 hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
           >
             ▲
           </button>
@@ -103,7 +107,7 @@ export function TicketCard({
             onClick={onMoveDown}
             disabled={!onMoveDown}
             title="Descendre"
-            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant/30 hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
+            className="cursor-pointer w-5 h-5 flex items-center justify-center text-on-surface-variant hover:text-on-surface disabled:opacity-0 transition-colors text-xs"
           >
             ▼
           </button>
@@ -122,20 +126,22 @@ export function TicketCard({
         {ticket.numero}
       </button>
 
-      {/* Infos patient */}
-      <div className="flex-1 min-w-0 flex items-center gap-4">
-        <span className="font-headline font-bold text-on-surface italic whitespace-nowrap truncate min-w-[100px]">
-          {ticket.nom_prive ?? <span className="not-italic font-normal text-on-surface-variant/50">Sans nom</span>}
-        </span>
+      {/* Infos */}
+      <div className="flex-1 min-w-0 flex items-center gap-2">
         {!compact && (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className={`text-xs font-label font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${cfg.chip}`}>
+          <>
+            <span className={`text-xs font-label font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm shrink-0 ${cfg.chip}`}>
               {cfg.label}
             </span>
-            <span className="text-xs text-on-surface-variant/50">
+            <span className="text-xs text-on-surface-variant/50 shrink-0">
               {formatDuree(dureeDepuis)}
             </span>
-          </div>
+          </>
+        )}
+        {afficherNom && ticket.nom_prive && (
+          <span className="text-xs text-on-surface/60 italic truncate">
+            {ticket.nom_prive}
+          </span>
         )}
       </div>
 

@@ -16,6 +16,7 @@ export function SettingsView() {
   const [annonce, setAnnonce] = useState(false);
   const [ecran, setEcran] = useState(false);
   const [metriques, setMetriques] = useState(false);
+  const [afficherNom, setAfficherNom] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -29,6 +30,7 @@ export function SettingsView() {
         setAnnonce((p.annonce_vocale as boolean) ?? false);
         setEcran((p.ecran_salle as boolean) ?? false);
         setMetriques((p.metriques as boolean) ?? false);
+        setAfficherNom((p.afficher_nom as boolean) ?? false);
         setLoaded(true);
       });
   }, []);
@@ -46,6 +48,7 @@ export function SettingsView() {
           annonce_vocale: annonce,
           ecran_salle: ecran,
           metriques,
+          afficher_nom: afficherNom,
         },
       }),
     });
@@ -106,6 +109,12 @@ export function SettingsView() {
           <div className="space-y-4">
             <p className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-[0.1em]">Modules optionnels</p>
 
+            <Toggle
+              label="Afficher les noms des patients"
+              description="Affiche le nom à droite de la durée dans la file d'attente"
+              checked={afficherNom}
+              onChange={setAfficherNom}
+            />
             <Toggle
               label="Annonces vocales"
               description="Lecture audio AR→FR à chaque appel (fichiers requis : npm run gen:audio)"

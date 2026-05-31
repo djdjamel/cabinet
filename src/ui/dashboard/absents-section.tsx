@@ -8,9 +8,10 @@ interface AbsentsSectionProps {
   onAction: (id: string, payload: Record<string, unknown>) => void;
   onSelect: (ticket: TicketVue) => void;
   compact?: boolean;
+  afficherNom?: boolean;
 }
 
-export function AbsentsSection({ absents, onAction, onSelect, compact }: AbsentsSectionProps) {
+export function AbsentsSection({ absents, onAction, onSelect, compact, afficherNom }: AbsentsSectionProps) {
   const [open, setOpen] = useState(true);
 
   if (absents.length === 0) return null;
@@ -39,7 +40,7 @@ export function AbsentsSection({ absents, onAction, onSelect, compact }: Absents
       {open && (
         <div className="flex flex-col gap-2">
           {absents.map((t) => (
-            <AbsentCard key={t.id} ticket={t} onAction={onAction} onSelect={onSelect} compact={compact} />
+            <AbsentCard key={t.id} ticket={t} onAction={onAction} onSelect={onSelect} compact={compact} afficherNom={afficherNom} />
           ))}
         </div>
       )}
@@ -52,11 +53,13 @@ function AbsentCard({
   onAction,
   onSelect,
   compact,
+  afficherNom,
 }: {
   ticket: TicketVue;
   onAction: (id: string, payload: Record<string, unknown>) => void;
   onSelect: (ticket: TicketVue) => void;
   compact?: boolean;
+  afficherNom?: boolean;
 }) {
   const [secsLeft, setSecsLeft] = useState(ticket.grace_restante_sec ?? 0);
 
@@ -85,11 +88,13 @@ function AbsentCard({
         </button>
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-headline font-bold text-on-surface/70 italic truncate">
-            {ticket.nom_prive ?? (
-              <span className="not-italic font-normal text-on-surface-variant/70">Sans nom</span>
-            )}
-          </p>
+          {afficherNom && (
+            <p className="text-sm font-headline font-bold text-on-surface/70 italic truncate">
+              {ticket.nom_prive ?? (
+                <span className="not-italic font-normal text-on-surface-variant/70">Sans nom</span>
+              )}
+            </p>
+          )}
           <p className="text-xs font-mono text-status-absent tabular-nums">{m}:{s}</p>
         </div>
 
@@ -126,11 +131,13 @@ function AbsentCard({
 
       {/* Infos */}
       <div className="flex items-center gap-4 flex-grow min-w-0">
-        <span className="text-lg font-headline font-bold text-on-surface/70 italic line-through whitespace-nowrap min-w-[100px] truncate">
-          {ticket.nom_prive ?? (
-            <span className="not-italic no-underline font-normal text-on-surface-variant/70">Sans nom</span>
-          )}
-        </span>
+        {afficherNom && (
+          <span className="text-lg font-headline font-bold text-on-surface/70 italic line-through whitespace-nowrap min-w-[100px] truncate">
+            {ticket.nom_prive ?? (
+              <span className="not-italic no-underline font-normal text-on-surface-variant/70">Sans nom</span>
+            )}
+          </span>
+        )}
         <span className="text-xs font-body font-semibold text-status-absent flex items-center gap-1 bg-status-absent/5 px-2 py-0.5 rounded whitespace-nowrap">
           ⏳ {m}:{s} restantes
         </span>

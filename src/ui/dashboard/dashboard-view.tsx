@@ -159,6 +159,7 @@ export function DashboardView() {
               <TicketCard
                 ticket={state.en_cours}
                 isFeatured
+                afficherNom={state.params.afficher_nom}
                 onAction={action}
                 onSelect={setSelectedTicket}
                 onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
@@ -176,7 +177,7 @@ export function DashboardView() {
               color="text-status-waitlist"
               countColor="text-status-waitlist/80 bg-status-waitlist/10"
             />
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1 max-h-[55vh] overflow-y-auto pr-1">
               {state.en_attente.length === 0 ? (
                 <div className="text-center py-12 text-on-surface-variant/50 text-sm">
                   File vide — en attente de patients
@@ -186,6 +187,7 @@ export function DashboardView() {
                   <TicketCard
                     key={t.id}
                     ticket={t}
+                    afficherNom={state.params.afficher_nom}
                     onAction={action}
                     onSelect={setSelectedTicket}
                     onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
@@ -221,6 +223,7 @@ export function DashboardView() {
             onAction={action}
             onSelect={setSelectedTicket}
             compact
+            afficherNom={state.params.afficher_nom}
           />
         </div>
       </main>
