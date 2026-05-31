@@ -75,5 +75,14 @@ export function useDashboard(pollInterval = 4000) {
     await fetchFile();
   }
 
-  return { state, status, action, creerTicket, cloturerJournee, moveTickets };
+  async function suivant() {
+    await fetch("/api/flow/next", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    await fetchFile();
+  }
+
+  return { state, status, action, creerTicket, cloturerJournee, moveTickets, suivant };
 }

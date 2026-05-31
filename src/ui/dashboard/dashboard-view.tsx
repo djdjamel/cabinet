@@ -28,7 +28,7 @@ function formatDuree(min: number): string {
 }
 
 export function DashboardView() {
-  const { state, status, action, creerTicket, cloturerJournee, moveTickets } = useDashboard();
+  const { state, status, action, creerTicket, cloturerJournee, moveTickets, suivant } = useDashboard();
   const { jouerAnnonce } = useAnnonce();
 
   const [showNouveauModal, setShowNouveauModal] = useState(false);
@@ -80,6 +80,7 @@ export function DashboardView() {
   }
 
   const tamponPlein = state.tampon.length >= 2;
+  const canSuivant = !!(state.en_cours || state.tampon.length > 0);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -148,6 +149,14 @@ export function DashboardView() {
               className="cursor-pointer border border-white/25 text-white hover:bg-white hover:text-[#0F1F3D] font-label font-bold text-xs uppercase tracking-[0.15em] px-5 py-2 rounded-sm transition-all"
             >
               + Nouveau patient
+            </button>
+            <button
+              onClick={suivant}
+              disabled={!canSuivant}
+              className="cursor-pointer bg-status-consultation text-white font-label font-bold text-sm uppercase tracking-[0.12em] px-6 py-2 rounded-sm hover:bg-status-consultation/90 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+              title="Admettre le prochain patient (cascade)"
+            >
+              Suivant ▸
             </button>
           </div>
         </div>
