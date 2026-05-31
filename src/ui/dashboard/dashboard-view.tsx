@@ -4,11 +4,28 @@ import { useState, useEffect } from "react";
 import { useDashboard, type TicketVue } from "./use-dashboard";
 import { TicketCard } from "./ticket-card";
 import { AbsentsSection } from "./absents-section";
+import { TamponSection } from "./tampon-section";
 import { NouveauPatientModal } from "./nouveau-patient-modal";
 import { DayClosureModal } from "./day-closure-modal";
 import { TicketDetailPanel } from "./ticket-detail-panel";
 import { MetricsPanel } from "./metrics-panel";
 import { useAnnonce } from "./use-annonce";
+
+const TYPE_CHIP: Record<string, string> = {
+  normal:     "text-on-surface-variant/70 bg-surface-container",
+  urgent:     "text-status-absent bg-status-absent/8",
+  acte_court: "text-status-consultation bg-status-consultation/8",
+};
+const TYPE_LABEL: Record<string, string> = {
+  normal: "Normal", urgent: "Urgent", acte_court: "Acte court",
+};
+
+function formatDuree(min: number): string {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m > 0 ? `${h}h${m.toString().padStart(2, "0")}` : `${h}h`;
+}
 
 export function DashboardView() {
   const { state, status, action, creerTicket, cloturerJournee, moveTickets } = useDashboard();
@@ -22,7 +39,6 @@ export function DashboardView() {
     new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
   );
 
-  // Horloge temps réel
   useEffect(() => {
     const id = setInterval(() => {
       setHeure(new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
@@ -30,7 +46,6 @@ export function DashboardView() {
     return () => clearInterval(id);
   }, []);
 
-  // Détection journée non clôturée
   useEffect(() => {
     fetch("/api/queue/status")
       .then((r) => r.json())
@@ -63,6 +78,8 @@ export function DashboardView() {
       </div>
     );
   }
+
+  const tamponPlein = state.tampon.length >= 2;
 
   return (
     <div className="min-h-screen bg-surface">
@@ -107,10 +124,9 @@ export function DashboardView() {
         />
       )}
 
-      {/* ── Header — dark navy ──────────────────────────────────────── */}
+      {/* ── Header ──────────────────────────────────────────────────── */}
       <header className="bg-[#0F1F3D] sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between gap-4">
-          {/* Nom du cabinet + date */}
           <div className="min-w-0 flex items-baseline gap-4">
             <p className="text-xl font-display font-bold text-white tracking-tight truncate leading-tight">
               {state.nom}
@@ -119,8 +135,6 @@ export function DashboardView() {
               {today} · {heure}
             </p>
           </div>
-
-          {/* Actions */}
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="/settings"
@@ -139,33 +153,29 @@ export function DashboardView() {
         </div>
       </header>
 
-      {/* ── Contenu principal — 2 colonnes ──────────────────────────── */}
+      {/* ── Contenu — 2 colonnes ────────────────────────────────────── */}
       <main className="max-w-6xl mx-auto px-8 py-8 flex flex-col lg:flex-row gap-8">
 
         {/* ── Colonne gauche : workflow principal ──────────────────── */}
         <div className="flex-1 min-w-0 flex flex-col gap-8">
 
-          {/* EN CONSULTATION */}
-          {state.en_cours && (
-            <section aria-labelledby="consultation-heading">
-              <SectionLabel
-                id="consultation-heading"
-                icon="⚕"
-                text="En Consultation"
-                count={1}
-                color="text-status-consultation"
-                countColor="text-status-consultation/80 bg-status-consultation/10"
-              />
-              <TicketCard
-                ticket={state.en_cours}
-                isFeatured
-                afficherNom={state.params.afficher_nom}
-                onAction={action}
-                onSelect={setSelectedTicket}
-                onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
-              />
-            </section>
-          )}
+          {/* SUR LE PONT (Tampon) */}
+          <section aria-labelledby="tampon-heading">
+            <SectionLabel
+              id="tampon-heading"
+              icon="🔔"
+              text="Sur le Pont"
+              count={state.tampon.length}
+              color="text-status-waitlist"
+              countColor="text-status-waitlist/80 bg-status-waitlist/10"
+            />
+            <TamponSection
+              tampon={state.tampon}
+              onAction={action}
+              onSelect={setSelectedTicket}
+              afficherNom={state.params.afficher_nom}
+            />
+          </section>
 
           {/* FILE D'ATTENTE */}
           <section aria-labelledby="queue-heading">
@@ -174,8 +184,8 @@ export function DashboardView() {
               icon="⏳"
               text="File d'Attente"
               count={state.en_attente.length}
-              color="text-status-waitlist"
-              countColor="text-status-waitlist/80 bg-status-waitlist/10"
+              color="text-primary"
+              countColor="text-primary/80 bg-primary/10"
             />
             <div className="flex flex-col gap-1 max-h-[55vh] overflow-y-auto pr-1">
               {state.en_attente.length === 0 ? (
@@ -188,6 +198,7 @@ export function DashboardView() {
                     key={t.id}
                     ticket={t}
                     afficherNom={state.params.afficher_nom}
+                    tamponPlein={tamponPlein}
                     onAction={action}
                     onSelect={setSelectedTicket}
                     onAnnonce={state.params.annonce_vocale ? jouerAnnonce : undefined}
@@ -200,20 +211,26 @@ export function DashboardView() {
           </section>
         </div>
 
-        {/* ── Sidebar droite : infos secondaires ──────────────────── */}
-        <div className="w-full lg:w-72 shrink-0 flex flex-col gap-6">
+        {/* ── Sidebar droite ───────────────────────────────────────── */}
+        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
 
-          {/* MÉTRIQUES */}
-          {state.params.metriques && (
-            <section aria-labelledby="metrics-heading">
+          {/* EN CONSULTATION */}
+          {state.en_cours && (
+            <section aria-labelledby="consultation-heading">
               <SectionLabel
-                id="metrics-heading"
-                icon="📊"
-                text="Métriques"
-                color="text-primary"
-                countColor=""
+                id="consultation-heading"
+                icon="⚕"
+                text="En Consultation"
+                count={1}
+                color="text-status-consultation"
+                countColor="text-status-consultation/80 bg-status-consultation/10"
               />
-              <MetricsPanel />
+              <ConsultationSidebarCard
+                ticket={state.en_cours}
+                onAction={action}
+                onSelect={setSelectedTicket}
+                afficherNom={state.params.afficher_nom}
+              />
             </section>
           )}
 
@@ -225,11 +242,82 @@ export function DashboardView() {
             compact
             afficherNom={state.params.afficher_nom}
           />
+
+          {/* MÉTRIQUES (bas de sidebar) */}
+          {state.params.metriques && (
+            <section aria-labelledby="metrics-heading">
+              <SectionLabel
+                id="metrics-heading"
+                icon="📊"
+                text="Métriques"
+                color="text-on-surface-variant"
+                countColor=""
+              />
+              <MetricsPanel />
+            </section>
+          )}
         </div>
       </main>
     </div>
   );
 }
+
+// ── Carte En Consultation (sidebar) ──────────────────────────────────────────
+
+function ConsultationSidebarCard({
+  ticket,
+  onAction,
+  onSelect,
+  afficherNom,
+}: {
+  ticket: TicketVue;
+  onAction: (id: string, payload: Record<string, unknown>) => void;
+  onSelect: (ticket: TicketVue) => void;
+  afficherNom: boolean;
+}) {
+  const duree = ticket.debut_consult_le
+    ? Math.floor((Date.now() - new Date(ticket.debut_consult_le).getTime()) / 60000)
+    : 0;
+  const chip = TYPE_CHIP[ticket.type] ?? TYPE_CHIP.normal;
+  const label = TYPE_LABEL[ticket.type] ?? TYPE_LABEL.normal;
+
+  return (
+    <div className="bg-status-consultation/5 border border-status-consultation/20 border-l-4 border-l-status-consultation rounded-lg px-4 py-4 space-y-3">
+      <div className="flex items-start gap-3">
+        <button
+          onClick={() => onSelect(ticket)}
+          title="Voir le détail"
+          className="text-5xl font-display font-bold tabular-nums text-status-consultation leading-none shrink-0 hover:opacity-70 cursor-pointer transition-opacity"
+        >
+          {ticket.numero}
+        </button>
+        <div className="flex-1 min-w-0 pt-0.5">
+          {afficherNom && (
+            <p className="text-sm font-headline font-bold text-on-surface italic truncate">
+              {ticket.nom_prive ?? (
+                <span className="not-italic font-normal text-on-surface-variant">Sans nom</span>
+              )}
+            </p>
+          )}
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className={`text-[10px] font-label font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${chip}`}>
+              {label}
+            </span>
+            <span className="text-xs text-on-surface-variant tabular-nums">{formatDuree(duree)}</span>
+          </div>
+        </div>
+      </div>
+      <button
+        onClick={() => onAction(ticket.id, { action: "terminer" })}
+        className="cursor-pointer w-full border border-status-consultation/40 text-status-consultation text-xs font-label font-bold uppercase tracking-widest py-2 rounded-sm hover:bg-status-consultation hover:text-on-primary transition-colors"
+      >
+        Terminer
+      </button>
+    </div>
+  );
+}
+
+// ── Étiquette de section ──────────────────────────────────────────────────────
 
 function SectionLabel({
   id,

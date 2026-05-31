@@ -19,6 +19,7 @@ export interface TicketVue {
 
 export interface FileVue {
   en_attente: TicketVue[];
+  tampon: TicketVue[];
   en_cours: TicketVue | null;
   absents: TicketVue[];
 }
@@ -61,8 +62,12 @@ export async function obtenirFile(
       .filter((t) => t.etat === "en_attente")
       .sort((a, b) => a.ordre - b.ordre)
       .map(toVue),
+    tampon: tickets
+      .filter((t) => t.etat === "appele")
+      .sort((a, b) => a.ordre - b.ordre)
+      .map(toVue),
     en_cours: (() => {
-      const t = tickets.find((t) => ["appele", "en_consultation"].includes(t.etat));
+      const t = tickets.find((t) => t.etat === "en_consultation");
       return t ? toVue(t) : null;
     })(),
     absents: tickets

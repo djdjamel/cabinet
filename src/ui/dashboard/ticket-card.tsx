@@ -9,6 +9,7 @@ interface TicketCardProps {
   compact?: boolean;
   isFeatured?: boolean;
   afficherNom?: boolean;
+  tamponPlein?: boolean;
   onAnnonce?: (numero: number) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -34,6 +35,7 @@ export function TicketCard({
   compact,
   isFeatured,
   afficherNom,
+  tamponPlein,
   onAnnonce,
   onMoveUp,
   onMoveDown,
@@ -147,7 +149,7 @@ export function TicketCard({
 
       {/* Actions */}
       <div className="shrink-0">
-        <Actions ticket={ticket} onAction={onAction} onAnnonce={onAnnonce} isAppele={isAppele} />
+        <Actions ticket={ticket} onAction={onAction} onAnnonce={onAnnonce} isAppele={isAppele} tamponPlein={tamponPlein} />
       </div>
     </div>
   );
@@ -158,11 +160,13 @@ function Actions({
   onAction,
   onAnnonce,
   isAppele,
+  tamponPlein,
 }: {
   ticket: TicketVue;
   onAction: (id: string, payload: Record<string, unknown>) => void;
   onAnnonce?: (numero: number) => void;
   isAppele: boolean;
+  tamponPlein?: boolean;
 }) {
   const { id } = ticket;
 
@@ -178,6 +182,7 @@ function Actions({
   }
 
   if (!isAppele) {
+    if (tamponPlein) return null;
     return (
       <button
         onClick={() => {
