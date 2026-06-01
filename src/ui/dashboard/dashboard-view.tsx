@@ -232,24 +232,29 @@ export function DashboardView() {
         <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
 
           {/* EN CONSULTATION */}
-          {state.en_cours && (
-            <section aria-labelledby="consultation-heading">
-              <SectionLabel
-                id="consultation-heading"
-                icon="⚕"
-                text="En Consultation"
-                count={1}
-                color="text-status-consultation"
-                countColor="text-status-consultation/80 bg-status-consultation/10"
-              />
+          <section aria-labelledby="consultation-heading">
+            <SectionLabel
+              id="consultation-heading"
+              icon="⚕"
+              text="En Consultation"
+              count={state.en_cours ? 1 : undefined}
+              color="text-status-consultation"
+              countColor="text-status-consultation/80 bg-status-consultation/10"
+            />
+            {state.en_cours ? (
               <ConsultationSidebarCard
                 ticket={state.en_cours}
                 onAction={action}
                 onSelect={setSelectedTicket}
                 afficherNom={state.params.afficher_nom}
               />
-            </section>
-          )}
+            ) : (
+              <div className="border border-outline-variant/30 border-dashed rounded-lg flex flex-col items-center justify-center min-h-[100px] gap-1 bg-surface-container/20">
+                <span className="text-2xl font-display text-on-surface-variant/20">—</span>
+                <span className="text-[10px] font-label text-on-surface-variant/30 uppercase tracking-widest">Libre</span>
+              </div>
+            )}
+          </section>
 
           {/* MÉTRIQUES (bas de sidebar) */}
           {state.params.metriques && (
