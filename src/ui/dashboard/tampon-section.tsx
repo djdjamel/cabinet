@@ -63,7 +63,11 @@ function FilledSlot({
     : null;
 
   return (
-    <div className="bg-status-waitlist/8 border border-status-waitlist/25 border-l-4 border-l-status-waitlist rounded-lg px-4 py-3 flex flex-col gap-3">
+    <div className="relative overflow-hidden bg-status-waitlist/8 border border-status-waitlist/25 border-l-4 border-l-status-waitlist rounded-lg px-4 py-3 flex flex-col gap-3">
+      {/* Icône d'état — personne avec flèche avant */}
+      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-status-waitlist opacity-[0.09] pointer-events-none select-none" aria-hidden="true">
+        <PersonArrowIcon />
+      </span>
       {/* Numéro + timer */}
       <div className="flex items-start justify-between">
         <button
@@ -108,6 +112,23 @@ function FilledSlot({
         </button>
       </div>
     </div>
+  );
+}
+
+// ── Icônes ───────────────────────────────────────────────────────────────────
+
+function PersonArrowIcon() {
+  return (
+    <svg viewBox="0 0 72 56" fill="currentColor" className="w-16 h-14" aria-hidden="true">
+      {/* Head */}
+      <circle cx="18" cy="10" r="8" />
+      {/* Body */}
+      <path d="M6 24 C6 17 30 17 30 24 L27 46 H9 Z" />
+      {/* Arrow shaft */}
+      <line x1="36" y1="28" x2="66" y2="28" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+      {/* Arrowhead */}
+      <polyline points="56,20 66,28 56,36" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

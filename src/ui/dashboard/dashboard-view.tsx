@@ -288,7 +288,11 @@ function ConsultationSidebarCard({
   const label = TYPE_LABEL[ticket.type] ?? TYPE_LABEL.normal;
 
   return (
-    <div className="bg-status-consultation/5 border border-status-consultation/20 border-l-4 border-l-status-consultation rounded-lg px-4 py-4 space-y-3">
+    <div className="relative overflow-hidden bg-status-consultation/5 border border-status-consultation/20 border-l-4 border-l-status-consultation rounded-lg px-4 py-4 space-y-3">
+      {/* Icône d'état — stéthoscope */}
+      <span className="absolute -right-2 -bottom-2 text-status-consultation opacity-[0.08] pointer-events-none select-none" aria-hidden="true">
+        <StethoscopeIcon />
+      </span>
       <div className="flex items-start gap-3">
         <button
           onClick={() => onSelect(ticket)}
@@ -320,6 +324,29 @@ function ConsultationSidebarCard({
         Terminer
       </button>
     </div>
+  );
+}
+
+// ── Icônes ───────────────────────────────────────────────────────────────────
+
+function StethoscopeIcon() {
+  return (
+    <svg viewBox="0 0 60 80" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="w-20 h-24" aria-hidden="true">
+      {/* Ear tips */}
+      <circle cx="16" cy="8" r="4.5" fill="currentColor" stroke="none" />
+      <circle cx="38" cy="8" r="4.5" fill="currentColor" stroke="none" />
+      {/* Ear stems */}
+      <line x1="16" y1="12.5" x2="16" y2="24" strokeWidth="3.5" />
+      <line x1="38" y1="12.5" x2="38" y2="24" strokeWidth="3.5" />
+      {/* Binaural curve joining to single tube */}
+      <path d="M16 24 C16 34 27 36 27 44" strokeWidth="3.5" />
+      <path d="M38 24 C38 34 27 36 27 44" strokeWidth="3.5" />
+      {/* Tube to chest piece */}
+      <path d="M27 44 C27 56 44 57 46 67" strokeWidth="3.5" />
+      {/* Chest piece (diaphragm) */}
+      <circle cx="46" cy="73" r="6.5" strokeWidth="3.5" />
+      <circle cx="46" cy="73" r="2.5" fill="currentColor" stroke="none" />
+    </svg>
   );
 }
 
