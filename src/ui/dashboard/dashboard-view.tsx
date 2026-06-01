@@ -137,13 +137,6 @@ export function DashboardView() {
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <a
-              href="/settings"
-              className="cursor-pointer p-2 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors text-lg"
-              title="Paramètres"
-            >
-              ⚙
-            </a>
             <button
               onClick={() => setShowNouveauModal(true)}
               className="cursor-pointer border border-white/25 text-white hover:bg-white hover:text-[#0F1F3D] font-label font-bold text-xs uppercase tracking-[0.15em] px-5 py-2 rounded-sm transition-all"

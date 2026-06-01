@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import { useRouter } from "next/navigation";
 
 interface CabinetData {
   nom: string;
@@ -9,7 +8,6 @@ interface CabinetData {
 }
 
 export function SettingsView() {
-  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const [nom, setNom] = useState("");
   const [duree, setDuree] = useState(15);
@@ -70,15 +68,7 @@ export function SettingsView() {
       <div className="max-w-lg mx-auto px-6 py-8 space-y-6">
 
         {/* En-tête */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="cursor-pointer text-sm text-on-surface-variant hover:text-primary font-label font-semibold transition-colors"
-          >
-            ← Tableau de bord
-          </button>
-          <h1 className="text-2xl font-display font-bold text-on-surface tracking-tight">Paramètres</h1>
-        </div>
+        <h1 className="text-2xl font-display font-bold text-on-surface tracking-tight">Paramètres</h1>
 
         <form onSubmit={handleSubmit} className="bg-white border border-outline-variant/40 rounded-lg shadow-sm p-6 space-y-6">
 
