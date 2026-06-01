@@ -80,7 +80,7 @@ export function DashboardView() {
   }
 
   const tamponPlein = state.tampon.length >= 2;
-  const canSuivant = !!(state.en_cours || state.tampon.length > 0);
+  const canSuivant = !!(state.en_cours || state.tampon.length > 0 || state.en_attente.length > 0);
 
   return (
     <div className="min-h-screen bg-surface">

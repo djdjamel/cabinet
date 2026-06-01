@@ -5,7 +5,7 @@ const BUFFER_SIZE = 2;
 export interface SuivantResult {
   clos: boolean;
   admis: boolean;
-  appele: boolean;
+  appele: number;
 }
 
 /**
@@ -14,11 +14,11 @@ export interface SuivantResult {
  * En un seul appel :
  *  1. Clore le patient EN_CONSULTATION (→ terminé)
  *  2. Admettre la tête du tampon ON_DECK (→ en_consultation)
- *  3. FILL : appeler le prochain EN_ATTENTE pour garder le tampon plein
+ *  3. FILL : remplir toutes les places libres du tampon depuis EN_ATTENTE
  *
- * Si le tampon est vide mais qu'un patient est en consultation (T3b),
- * on le clôture seulement (borne libre).
- * Si rien à faire, renvoie { clos:false, admis:false, appele:false }.
+ * Si tampon et consultation sont vides mais qu'il y a des patients en
+ * attente, le FILL remplit le tampon (jusqu'à BUFFER_SIZE) sans rien clore.
+ * Si rien à faire du tout, renvoie { clos:false, admis:false, appele:0 }.
  */
 export async function suivantCascade(
   repo: TicketRepository,
@@ -37,8 +37,9 @@ export async function suivantCascade(
     .filter((t) => t.etat === "en_attente")
     .sort((a, b) => a.ordre - b.ordre);
 
-  if (!enConsultation && tampon.length === 0) {
-    return { clos: false, admis: false, appele: false };
+  // Rien à faire
+  if (!enConsultation && tampon.length === 0 && enAttente.length === 0) {
+    return { clos: false, admis: false, appele: 0 };
   }
 
   // 1. Clore la consultation en cours
@@ -58,16 +59,20 @@ export async function suivantCascade(
     });
   }
 
-  // 3. FILL — le tampon a perdu sa tête ; s'il reste de la place, on rappelle
-  const tamponRestant = tampon.length - (tamponHead ? 1 : 0);
-  let appele = false;
-  if (tamponRestant < BUFFER_SIZE && enAttente.length > 0) {
-    await repo.update(enAttente[0].id, cabinetId, {
+  // 3. FILL — remplir toutes les places disponibles du tampon
+  let tamponRestant = tampon.length - (tamponHead ? 1 : 0);
+  const enAttenteFile = [...enAttente];
+  let appeleCount = 0;
+
+  while (tamponRestant < BUFFER_SIZE && enAttenteFile.length > 0) {
+    const prochain = enAttenteFile.shift()!;
+    await repo.update(prochain.id, cabinetId, {
       etat: "appele",
       appele_le: now,
     });
-    appele = true;
+    tamponRestant++;
+    appeleCount++;
   }
 
-  return { clos: !!enConsultation, admis: !!tamponHead, appele };
+  return { clos: !!enConsultation, admis: !!tamponHead, appele: appeleCount };
 }
